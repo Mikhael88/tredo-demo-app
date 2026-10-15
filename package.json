@@ -1,0 +1,24 @@
+{
+  "name": "wise-hopper",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@babylonjs/core": "^9.28.0",
+    "@babylonjs/inspector": "^9.28.0",
+    "@babylonjs/loaders": "^9.28.0",
+    "@babylonjs/materials": "^9.28.0",
+    "@babylonjs/serializers": "^9.28.0",
+    "parse-exr": "^1.0.2"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2",
+    "vite": "^8.3.0"
+  }
+}

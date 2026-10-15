@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TREDO Studio — Babylon 3D Realtime Configurator</title>
+    <!-- Stylesheet loaded directly in head -->
+    <link rel="stylesheet" href="/src/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+    <!-- Babylon.js Official Standalone Bundles -->
+    <script src="https://cdn.babylonjs.com/babylon.js"></script>
+    <script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
+    <script src="https://cdn.babylonjs.com/serializers/babylonjs.serializers.min.js"></script>
+    <script src="https://cdn.babylonjs.com/inspector/babylon.inspector.bundle.js"></script>
+  </head>
+  <body class="theme-light">
+    <!-- Main App Container -->
+    <div class="app-layout" id="appLayout">
+      <!-- Floating Return to Studio bar when Babylon Inspector is active -->
+      <div class="inspector-return-bar" id="inspectorReturnBar">
+        <button class="btn-return-studio" id="btnReturnFromInspector" title="Torna all'interfaccia personalizzata TREDO Studio (Esc)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+          <span>TORNA A TREDO STUDIO</span>
+          <kbd class="kbd-hint">ESC</kbd>
+        </button>
+      </div>
+
+      <!-- 1. Top Header Bar (TREDO Inspired) -->
+      <header class="tredo-header" id="tredoHeader">
+        <div class="header-left">
+          <button class="header-nav-btn" id="btnHeaderBack" title="Torna alla Dashboard">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+            <span>TORNA ALLA DASHBOARD</span>
+          </button>
+        </div>
+
+        <div class="header-center">
+          <div class="tredo-brand">
+            <div class="tredo-logo-mark">T</div>
+            <span class="tredo-logo-text">TREDO</span>
+            <span class="tredo-badge">STUDIO</span>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <button class="header-action-btn" id="btnHeaderPreview" title="Nascondi interfaccia per visualizzazione cliente">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+            <span>ANTEPRIMA</span>
+          </button>
+
+          <button class="header-action-btn" id="btnHeaderInspector" title="Apri l'Inspector ufficiale Babylon Sandbox (nasconde l'interfaccia custom automaticamente)">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+            <span>INSPECTOR</span>
+          </button>
+
+          <button class="header-action-btn" id="btnHeaderExport" title="Esporta modello GLB con materiali e modifiche incorporate">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            <span>ESPORTA GLB</span>
+          </button>
+
+          <button class="header-action-btn btn-theme-toggle" id="btnThemeToggle" title="Alterna Tema Chiaro / Scuro">
+            <span id="iconTheme">🌙</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- 2. Workspace Body (Left Sidebar + 3D Canvas + Right Sidebar) -->
+      <div class="app-workspace">
+        <!-- LEFT SIDEBAR: Nodes & Models Tree -->
+        <aside class="sidebar-left" id="leftSidebar">
+          <div class="sidebar-header">
+            <div class="sidebar-title-badge" id="modelTitle">MATERIALI-R80-PIASTRA</div>
+            <div class="sidebar-stats" id="modelStats">
+              <span id="statMeshes">0 mesh</span> • <span id="statVerts">0 vertici</span>
+            </div>
+          </div>
+
+          <div class="sidebar-add-model">
+            <button class="btn-dashed-add" id="btnBrowseGlb">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              <span>AGGIUNGI MODELLO<br><small>(.GLB, FINO A 100MB)</small></span>
+            </button>
+            <input type="file" id="fileInputGlb" accept=".glb,.gltf" style="display: none;" />
+          </div>
+
+          <div class="loaded-file-pill" id="loadedFilePill" style="display: none;">
+            <span class="file-name-text" id="footerFileName">Nessun file aperto</span>
+            <button class="btn-icon-trash" id="btnRemoveModel" title="Ricarica o rimuovi modello">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Scene Hierarchy Tree (Nodes) -->
+          <div class="nodes-tree-section">
+            <div class="nodes-tree-title">Nodes</div>
+            <div class="nodes-tree-container" id="nodesTreeContainer">
+              <!-- Camera item -->
+              <div class="tree-node-item active" id="nodeCam">
+                <span class="tree-icon">📷</span>
+                <span class="tree-label">Camera</span>
+                <button class="tree-action-icon" id="btnResetCameraView" title="Reimposta visuale camera">⟲</button>
+              </div>
+
+              <!-- Studio Lights node -->
+              <div class="tree-node-group">
+                <div class="tree-node-item" id="nodeStudioLights">
+                  <span class="tree-icon">💡</span>
+                  <span class="tree-label">Luci Studio</span>
+                  <button class="tree-action-icon tree-eye" id="btnToggleStudioLightsEye" title="Attiva/Disattiva illuminazione studio">👁️</button>
+                </div>
+                <div class="tree-subnodes">
+                  <div class="tree-subnode-item" id="nodeRectAreaLight">
+                    <span class="tree-icon">◽</span>
+                    <span class="tree-label">RectAreaLight (Softbox)</span>
+                    <button class="tree-action-icon tree-eye" id="btnToggleRectEye">👁️</button>
+                  </div>
+                  <div class="tree-subnode-item" id="nodeDirLight">
+                    <span class="tree-icon">☀️</span>
+                    <span class="tree-label">Luce Direzionale (Sole)</span>
+                    <button class="tree-action-icon tree-eye" id="btnToggleDirEye">👁️</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Meshes Hierarchy (__root__) -->
+              <div class="tree-node-group" id="nodeModelHierarchy">
+                <div class="tree-node-item" id="nodeRootGroup">
+                  <span class="tree-icon">⚙️</span>
+                  <span class="tree-label">__root__ (Geometrie)</span>
+                </div>
+                <div class="tree-subnodes" id="meshTreeList">
+                  <div class="tree-subnode-empty">Nessun modello caricato</div>
+                </div>
+              </div>
+
+              <!-- Lookdev Calibration Balls -->
+              <div class="tree-node-item" id="nodeLookdevBalls">
+                <span class="tree-icon">🔮</span>
+                <span class="tree-label">Sfere Lookdev Calibrazione</span>
+                <button class="tree-action-icon tree-eye" id="btnToggleLookdevEye" title="Mostra/Nascondi le 3 sfere di calibrazione PBR">👁️</button>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <!-- CENTER 3D VIEWPORT -->
+        <main class="viewport-center">
+          <div id="canvasZone">
+            <canvas id="renderCanvas"></canvas>
+          </div>
+
+          <!-- Empty State Dropzone -->
+          <div class="center-dropzone" id="centerDropzone">
+            <div class="drop-circle">
+              <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+            </div>
+            <h2>Trascina e rilascia il file .GLB esportato da Blender</h2>
+            <p class="drop-subtitle">La scena, l'antialiasing, i materiali personalizzati e la camera rimarranno intatti ad ogni hot-swap!</p>
+            <div class="drop-features">
+              <span>⚡ <strong>Hot-Swap Prodotto</strong>: sincronizza il modello senza perdere le modifiche</span>
+              <span>🔍 <strong>Anti-Aliasing Avanzato</strong>: Super-Sampling SSAA bordi + Specular AA per metalli spazzolati</span>
+              <span>👆 <strong>Select to Material</strong>: clicca un oggetto 3D per centrare il perno ed editarne il PBR</span>
+              <span>🔮 <strong>Sfere Lookdev</strong>: calibra contrasto e riflessi con sfere Matte, Gray 18% e Chrome</span>
+            </div>
+            <button class="btn btn-primary" id="btnBrowseGlbCentral">Sfoglia file GLB / GLTF</button>
+            <button class="btn-sample" id="btnLoadDemoProduct">Carica piano cottura inox di prova</button>
+          </div>
+
+          <!-- Floating Bottom Quick Toolbar -->
+          <div class="floating-quick-bar">
+            <button class="quick-tool-btn" id="btnFootFrame" title="Centra camera sul modello intero o sulla mesh selezionata (Tasto F)">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+              </svg>
+              <span>Centra (F)</span>
+            </button>
+
+            <button class="quick-tool-btn" id="btnFootRotate" title="Attiva rotazione automatica camera (Tasto R)">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+              </svg>
+              <span>Auto-Ruota</span>
+            </button>
+
+            <button class="quick-tool-btn" id="btnQuickLookdev" title="Attiva sfere lookdev per calibrare luce e riflessioni">
+              <span>🔮 Lookdev Balls</span>
+            </button>
+
+            <button class="quick-tool-btn" id="btnFootFullscreen" title="Schermo Intero">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+              </svg>
+              <span>Fullscreen</span>
+            </button>
+          </div>
+        </main>
+
+        <!-- RIGHT SIDEBAR: Tabbed Inspector (SCENA | LUCI | MODELLI | LOOKDEV) -->
+        <aside class="sidebar-right" id="rightSidebar">
+          <!-- Tab Headers -->
+          <nav class="inspector-tabs">
+            <button class="tab-btn active" id="tabBtnScena" data-tab="tabScena">SCENA</button>
+            <button class="tab-btn" id="tabBtnLuci" data-tab="tabLuci">LUCI</button>
+            <button class="tab-btn" id="tabBtnModelli" data-tab="tabModelli">MODELLI</button>
+            <button class="tab-btn" id="tabBtnLookdev" data-tab="tabLookdev">LOOKDEV</button>
+          </nav>
+
+          <!-- TAB 1: SCENA (Antialiasing, Camera, Environment, Tone Mapping, SSR, Background) -->
+          <div class="tab-content active" id="tabScena">
+            <!-- ▾ SECTION: ANTIALIASING & QUALITÀ VISIVA (CORE FEATURE) -->
+            <section class="accordion-sec expanded" id="secAntialiasing">
+              <div class="accordion-header">
+                <span class="accordion-arrow">▾</span>
+                <span class="accordion-title">ANTIALIASING & QUALITÀ VISIVA</span>
+              </div>
+              <div class="accordion-body">
+                <div class="sub-sec-title">Bordi Geometrie (Edge Anti-Aliasing)</div>
+                <div class="prop-row">
+                  <span>Risoluzione / SSAA</span>
+                  <select id="selectSsaaResolution" class="select-clean">
+                    <option value="0.67" selected>Super-Sampling 1.5x (Consigliato)</option>
+                    <option value="0.5">Ultra SSAA 2.0x (Massima Fedeltà)</option>
+                    <option value="1.0">Nativo 1.0x (Standard WebGL)</option>
+                    <option value="1.33">Prestazioni 0.75x</option>
+                  </select>
+                </div>
+                <div class="checkbox-clean mt-4">
+                  <label>
+                    <input type="checkbox" id="chkEnableFxaa" />
+                    <span>Filtro Post-Process FXAA (Bordi Levigati)</span>
+                  </label>
+                </div>
+                <div class="prop-row mt-4">
+                  <span>Campioni MSAA</span>
+                  <select id="selectMsaaSamples" class="select-clean">
+                    <option value="1">1x (Disabilitato)</option>
+                    <option value="2">2x</option>
+                    <option value="4" selected>4x (Consigliato)</option>
+                    <option value="8">8x (Massimo)</option>
+                  </select>
+                </div>
+
+                <div class="sub-sec-title mt-6">Texture & Microrugosità (Anti-Grain Metalli)</div>
+                <div class="checkbox-clean">
+                  <label>
+                    <input type="checkbox" id="chkSpecularAa" checked />
+                    <strong>Specular Anti-Aliasing (Attenua granulosità PBR)</strong>
+                  </label>
+                </div>
+                <p class="prop-hint">Filtra la varianza delle normali nei pixel, eliminando sfarfallio e ruvidità sulle texture metalliche spazzolate.</p>
+
+                <div class="prop-row mt-4">
+                  <span>Filtro Anisotropico</span>
+                  <select id="selectAnisotropic" class="select-clean">
+                    <option value="16" selected>16x (Massima Chiarezza Angolare)</option>
+                    <option value="8">8x (Elevata)</option>
+                    <option value="4">4x (Media)</option>
+                    <option value="1">1x (Off)</option>
+                  </select>
+                </div>
+
+                <div class="prop-row mt-4">
+                  <span>Campionamento Texture</span>
+                  <select id="selectTextureSampling" class="select-clean">
+                    <option value="trilinear" selected>Trilineare (Smooth Mipmaps)</option>
+                    <option value="bilinear">Bilineare</option>
+                  </select>
+                </div>
+
+                <div class="slider-prop mt-4">
+                  <div class="slider-prop-meta">
+                    <span>Ammorbidimento Mappa Normali</span>
+                    <span class="slider-prop-val" id="valNormalSoftening">0%</span>
+                  </div>
+                  <input type="range" id="sliderNormalSoftening" min="0" max="1" step="0.05" value="0.0" />
+                </div>
+              </div>
+            </section>
+
+            <!-- ▾ SECTION: POSIZIONE CAMERA -->
+            <section class="accordion-sec expanded" id="secCamera">
+              <div class="accordion-header">
+                <span class="accordion-arrow">▾</span>
+                <span class="accordion-title">POSIZIONE</span>
+              </div>
+              <div class="accordion-body">
+                <div class="cam-coord-grid">
+                  <div class="cam-coord-box">
+                    <span class="coord-label">Orizzontale</span>
+                    <span class="coord-val" id="valCamH">70.53°</span>
+                  </div>
+                  <div class="cam-coord-box">
+                    <span class="coord-label">Verticale</span>
+                    <span class="coord-val" id="valCamV">30.41°</span>
+                  </div>
+                  <div class="cam-coord-box">
+                    <span class="coord-label">Distanza</span>
+                    <span class="coord-val" id="valCamDist">2.5 m</span>
+                  </div>
+                </div>
+
+                <button class="btn-outline-blue mt-4" id="btnSetDefaultCamPos">
+                  IMPOSTA COME POSIZIONE DI DEFAULT
+                </button>
+
+                <div class="default-pos-meta mt-4">
+                  <span class="sub-sec-title">POSIZIONE DEFAULT</span>
+                  <div class="cam-coord-grid mt-2">
+                    <div class="cam-coord-box">
+                      <span class="coord-label">Orizzontale</span>
+                      <span class="coord-val" id="defCamH">70.53°</span>
+                    </div>
+                    <div class="cam-coord-box">
+                      <span class="coord-label">Verticale</span>
+                      <span class="coord-val" id="defCamV">30.41°</span>
+                    </div>
+                    <div class="cam-coord-box">
+                      <span class="coord-label">Distanza</span>
+                      <span class="coord-val" id="defCamDist">2.5 m</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="switch-row mt-6">
+                  <span>Limita i movimenti di camera</span>
+                  <label class="tredo-switch">
+                    <input type="checkbox" id="chkLimitCam" />
+                    <span class="switch-slider"></span>
+                  </label>
+                </div>
+
+                <div class="switch-row mt-3">
+                  <span>Rotazione automatica</span>
+                  <label class="tredo-switch">
+                    <input type="checkbox" id="chkAutoRotate" />
+                    <span class="switch-slider"></span>
+                  </label>
+                </div>
+              </div>
+            </section>
+
+            <!-- ▾ SECTION: ENVIRONMENT (HDRI / EXR) -->
+            <section class="accordion-sec expanded" id="secEnvironment">
+              <div class="accordion-header">
+                <span class="accordion-arrow">▾</span>
+                <span class="accordion-title">ENVIRONMENT</span>
+              </div>
+              <div class="accordion-body">
+                <button class="btn-dashed-box" id="btnUploadEnvFile">
+                  <span>CARICA ENVIRONMENT</span>
+                </button>
+                <div class="file-support-hint">Formati supportati: .env, .hdr, .exr</div>
+                <input type="file" id="fileInputHdrExr" accept=".hdr,.exr,.env" style="display: none;" />
+
+                <div class="slider-prop mt-4">
+                  <div class="slider-prop-meta">
+                    <span>Intensità</span>
+                    <span class="prop-num-box" id="valEnvIntensity">1</span>
+                  </div>
+                  <input type="range" id="sliderEnvIntensity" min="0.1" max="4.0" step="0.05" value="1.0" />
+                </div>
+
+                <div class="slider-prop mt-4">
+                  <div class="slider-prop-meta">
+                    <span>Rotazione IBL</span>
+                    <span class="prop-num-box" id="valEnvRotation">0°</span>
+                  </div>
+                  <input type="range" id="sliderEnvRotation" min="0" max="360" step="1" value="0" />
+                </div>
+
+                <div class="switch-row mt-4">
+                  <span>Mostra sfondo (Skybox)</span>
+                  <label class="tredo-switch">
+                    <input type="checkbox" id="chkShowSkybox" checked />
+                    <span class="switch-slider"></span>
+                  </label>
+                </div>
+
+                <div class="slider-prop mt-4">
+                  <div class="slider-prop-meta">
+                    <span>Sfocatura Skybox</span>
+                    <span class="prop-num-box" id="valSkyboxBlur">0.3</span>
+                  </div>
+                  <input type="range" id="sliderSkyboxBlur" min="0" max="1" step="0.05" value="0.3" />
+                </div>
+              </div>
+            </section>
+
+            <!-- ▾ SECTION: HDRI TO CUBEMAP CONVERTER -->
+            <section class="accordion-sec expanded" id="secHdriToCubemap">
+              <div class="accordion-header">
+                <span class="accordion-arrow">▾</span>
+                <span class="accordion-title">HDRI TO CUBEMAP (4x3 Cross)</span>
+                <span class="accordion-badge">HDR</span>
+              </div>
+              <div class="accordion-body">
+                <p class="section-desc-small">
+                  Converte automaticamente mappe panoramiche sferiche (.hdr, .exr) in Cubemap 4x3 Cross in background e carica la cubemap come illuminazione dell'environment 3D.
+                </p>
+
+                <div class="prop-row mt-3">
+                  <span>Risoluzione Faccia</span>
+                  <select id="selectCubemapFaceSize" class="select-clean">
+                    <option value="256">256px (1024 × 768)</option>
+                    <option value="512" selected>512px (2048 × 1536) — Ottimale</option>
+                    <option value="1024">1024px (4096 × 3072) — Alta Qualità</option>
+                    <option value="2048">2048px (8192 × 6144) — Ultra-Res</option>
+                  </select>
+                </div>
+
+                <div class="switch-row mt-4">
+                  <span>Download automatico .hdr su conversione</span>
+                  <label class="tredo-switch">
+                    <input type="checkbox" id="chkAutoConvertCubemapHdr" />
+                    <span class="switch-slider"></span>
+                  </label>
+                </div>
+
+                <div id="cubemapStatusInfo" class="cubemap-status-box mt-3" style="display: none; padding: 8px 12px; background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 6px; font-size: 11px; color: #38bdf8;">
+                  <span id="cubemapStatusText">Nessuna cubemap in memoria</span>
+                </div>
+
+                <button class="btn-dashed-box mt-4" id="btnConvertHdriToCubemap">
+                  <span>🔄 SFOGLIA E CONVERTI HDRI IN CUBEMAP (.HDR)</span>
+                </button>
+                <input type="file" id="fileInputConvertHdr" accept=".hdr,.exr" style="display: none;" />
+
+                <button class="btn-outline-secondary w-full mt-3" id="btnDownloadCubemapHdr" style="display: none;">
+                  <span>⬇️ SCARICA CUBEMAP (.HDR)</span>
+                </button>
+              </div>
+            </section>
+
+            <!-- ▾ SECTION: TONE MAPPING -->
+            <section class="accordion-sec expanded" id="secToneMapping">
+              <div class="accordion-header">
+                <span class="accordion-arrow">▾</span>
+                <span class="accordion-title">TONE MAPPING</span>
+              </div>
+              <div class="accordion-body">
+                <div class="switch-row">
+                  <span>Abilita tone mapping</span>
+                  <label class="tredo-switch">
+                    <input type="checkbox" id="chkEnableToneMapping" checked />
+                    <span class="switch-slider"></span>
+                  </label>
+                </div>
+
+                <div class="prop-row mt-4">
+                  <span>Tipo</span>
+                  <select id="quickToneMapping" class="select-clean">
+                    <option value="2" selected>Khronos PBR Neutral (Blender)</option>
+                    <option value="1">ACES (Cinematic)</option>
+                    <option value="0">Standard</option>
+                    <option value="-1">Lineare / Nessuno</option>
+                  </select>
+                </div>
+
+                <div class="slider-prop mt-4">
+                  <div class="slider-prop-meta">
+                    <span>Esposizione</span>
+                    <span class="prop-num-box" id="valQuickExposure">1.00</span>
+                  </div>
+                  <input type="range" id="quickExposure" min="0.2" max="3.0" step="0.05" value="1.0" />
+                </div>
+
+                <div class="slider-prop mt-4">
+                  <div class="slider-prop-meta">
+                    <span>Contrasto</span>
+                    <span class="prop-num-box" id="valToneContrast">1.00</span>
+                  </div>
+                  <input type="range" id="sliderToneContrast" min="0.2" max="2.5" step="0.05" value="1.0" />
+                </div>
+              </div>
+            </section>
+
+            <!-- ▾ SECTION: SCREEN SPACE REFLECTIONS (SSR) -->
+            <section class="accordion-sec" id="secSSR">
+              <div class="accordion-header">
+                <span class="accordion-arrow">▾</span>
+                <span class="accordion-title">SCREEN SPACE REFLECTIONS (SSR)</span>
+              </div>
+              <div class="accordion-body">
+                <div class="switch-row">
+                  <span>Abilita riflessioni SSR</span>
+                  <label class="tredo-switch">
+                    <input type="checkbox" id="chkEnableSsr" />
+                    <span class="switch-slider"></span>
+                  </label>
+                </div>
+
+                <div class="slider-prop mt-4">
+                  <div class="slider-prop-meta">
+                    <span>Morbidezza Riflessi (Blur Dispersion)</span>
+                    <span class="prop-num-box" id="valSsrBlurDispersion">0.12</span>
+                  </div>
+                  <input type="range" id="sliderSsrBlurDispersion" min="0.0" max="0.40" step="0.01" value="0.12" />
+                </div>
+
+                <div class="slider-prop mt-4">
+                  <div class="slider-prop-meta">
+                    <span>Rugosità Globale (Roughness Factor)</span>
+                    <span class="prop-num-box" id="valSsrRoughness">0.35</span>
+                  </div>
+                  <input type="range" id="sliderSsrRoughness" min="0.0" max="1.0" step="0.02" value="0.35" />
+                </div>
+
+                <div class="slider-prop mt-4">
+                  <div class="slider-prop-meta">
+                    <span>Decadimento Angolare (Falloff)</span>
+                    <span class="prop-num-box" id="valSsrFalloff">2.00</span>
+                  </div>
+                  <input type="range" id="sliderSsrFalloff" min="1.0" max="4.0" step="0.2" value="2.0" />
+                </div>
+
+                <div class="slider-prop mt-4">
+                  <div class="slider-prop-meta">
+                    <span>Intensità Riflessione (Strength)</span>
+                    <span class="prop-num-box" id="valSsrStrength">1.00</span>
+                  </div>
+                  <input type="range" id="sliderSsrStrength" min="0.1" max="2.5" step="0.05" value="1.0" />
+                </div>
+
+                <div class="slider-prop mt-4">
+                  <div class="slider-prop-meta">
+                    <span>Spessore Geometria (Thickness)</span>
+                    <span class="prop-num-box" id="valSsrThickness">0.50</span>
+                  </div>
+                  <input type="range" id="sliderSsrThickness" min="0.05" max="3.0" step="0.05" value="0.50" />
+                </div>
+
+                <div class="prop-row mt-4">
+                  <span>Passo Raggi (Step)</span>
+                  <select id="selectSsrStep" class="select-clean">
+                    <option value="1" selected>1 - Massima Fedeltà (Consigliato)</option>
+                    <option value="2">2 - Bilanciato</option>
+                    <option value="4">4 - Prestazioni elevate</option>
+                  </select>
+                </div>
+
+                <div class="checkbox-clean mt-4">
+                  <label>
+                    <input type="checkbox" id="chkSsrFresnel" checked />
+                    <span>Attenuazione Fresnel (Evita 'tutto lucido' frontale)</span>
+                  </label>
+                </div>
+                <div class="checkbox-clean mt-2">
+                  <label>
+                    <input type="checkbox" id="chkSsrSmooth" checked />
+                    <span>Smooth Reflections (per Step &gt; 1)</span>
+                  </label>
+                </div>
+                <div class="checkbox-clean mt-2">
+                  <label>
+                    <input type="checkbox" id="chkSsrDebug" />
+                    <span>Debug Mode (Raggi Calcolati)</span>
+                  </label>
+                </div>
+              </div>
+            </section>
+
+            <!-- ▾ SECTION: BACKGROUND -->
+            <section class="accordion-sec expanded" id="secBackground">
+              <div class="accordion-header">
+                <span class="accordion-arrow">▾</span>
+                <span class="accordion-title">BACKGROUND</span>
+              </div>
+              <div class="accordion-body">
+                <div class="color-picker-box">
+                  <div class="color-swatch-wrapper">
+                    <input type="color" id="inputBgColor" value="#f8fafc" />
+                  </div>
+                  <span class="color-hex-text" id="hexBgColor">#F8FAFC</span>
+                  <button class="btn-micro" id="btnResetBgColor">Ripristina</button>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <!-- TAB 2: LUCI (Studio Lighting, RectAreaLight, Softbox, Sun & Shadows) -->
+          <div class="tab-content" id="tabLuci">
+            <!-- Studio Presets -->
+            <section class="accordion-sec expanded">
+              <div class="accordion-header">
+                <span class="accordion-arrow">▾</span>
+                <span class="accordion-title">PRESET STUDIO LIGHTING</span>
+              </div>
+              <div class="accordion-body">
+                <div class="studio-presets-grid">
+                  <button class="btn-preset-light active" id="btnPresetKeyRight" data-preset="key_right">
+                    <span class="preset-icon">💡</span>
+                    <span>Key 45°</span>
+                  </button>
+                  <button class="btn-preset-light" id="btnPreset3Point" data-preset="three_point">
+                    <span class="preset-icon">✨</span>
+                    <span>3-Point Pro</span>
+                  </button>
+                  <button class="btn-preset-light" id="btnPresetTopSoftbox" data-preset="top_softbox">
+                    <span class="preset-icon">⚡</span>
+                    <span>Top Zenit</span>
+                  </button>
+                  <button class="btn-preset-light" id="btnPresetSoloHdr" data-preset="solo_hdr">
+                    <span class="preset-icon">🌅</span>
+                    <span>Solo HDRI</span>
+                  </button>
+                </div>
+              </div>
+            </section>
+
+            <!-- RectAreaLight Softbox -->
+            <section class="accordion-sec expanded">
+              <div class="accordion-header">
+                <span class="accordion-arrow">▾</span>
+                <span class="accordion-title">RECT AREA LIGHT (SOFTBOX 3D)</span>
+              </div>
+              <div class="accordion-body">
+                <div class="switch-row">
+                  <span>Abilita Luce ad Area</span>
+                  <label class="tredo-switch">
+                    <input type="checkbox" id="chkEnableRectLight" checked />
+                    <span class="switch-slider"></span>
+                  </label>
+                </div>
+
+                <div class="switch-row mt-3">
+                  <span>Visualizza Softbox 3D in Scena</span>
+                  <label class="tredo-switch">
+                    <input type="checkbox" id="chkShowLightGizmo" checked />
+                    <span class="switch-slider"></span>
+                  </label>
+                </div>
+
+                <div class="slider-prop mt-4">
+                  <div class="slider-prop-meta">
+                    <span>Intensità Diffusore</span>
+                    <span class="prop-num-box" id="valRectIntensity">3.00</span>
+                  </div>
+                  <input type="range" id="sliderRectIntensity" min="0" max="15" step="0.2" value="3.0" />
+                </div>
+
+                <div class="slider-prop mt-4">
+                  <div class="slider-prop-meta">
+                    <span>Larghezza Softbox (m)</span>
+                    <span class="prop-num-box" id="valRectWidth">1.50</span>
+                  </div>
+                  <input type="range" id="sliderRectWidth" min="0.2" max="6.0" step="0.1" value="1.5" />
+                </div>
+
+                <div class="slider-prop mt-4">
+                  <div class="slider-prop-meta">
+                    <span>Altezza Softbox (m)</span>
+                    <span class="prop-num-box" id="valRectHeight">1.50</span>
+                  </div>
+                  <input type="range" id="sliderRectHeight" min="0.2" max="6.0" step="0.1" value="1.5" />
+                </div>
+
+                <div class="slider-prop mt-4">
+                  <div class="slider-prop-meta">
+                    <span>Distanza dal Prodotto (m)</span>
+                    <span class="prop-num-box" id="valRectDistance">3.20</span>
+                  </div>
+                  <input type="range" id="sliderRectDistance" min="0.5" max="10.0" step="0.1" value="3.2" />
+                </div>
+
+                <div class="slider-prop mt-4">
+                  <div class="slider-prop-meta">
+                    <span>Altezza Posizione (m)</span>
+                    <span class="prop-num-box" id="valRectHeightPos">2.20</span>
+                  </div>
+                  <input type="range" id="sliderRectHeightPos" min="0.0" max="8.0" step="0.1" value="2.2" />
+                </div>
+
+                <div class="slider-prop mt-4">
+                  <div class="slider-prop-meta">
+                    <span>Rotazione Angolare (Giro)</span>
+                    <span class="prop-num-box" id="valRectAngle">45°</span>
+                  </div>
+                  <input type="range" id="sliderRectAngle" min="0" max="360" step="1" value="45" />
+                </div>
+
+                <div class="color-picker-box mt-4">
+                  <span>Tinta Colore Softbox</span>
+                  <div class="color-swatch-wrapper">
+                    <input type="color" id="rectLightColor" value="#ffffff" />
+                  </div>
+                </div>
+
+                <!-- Texture Emissiva HDR Softbox -->
+                <div class="tex-slot mt-4" id="slot_rect_hdr" title="Trascina mappa HDR o immagine sul diffusore per calcolo LTC">
+                  <div class="tex-thumb" id="thumb_rect_tex"></div>
+                  <div class="tex-meta">
+                    <span class="tex-label">Texture Emissiva HDR (LTC)</span>
+                    <div class="tex-buttons">
+                      <button class="btn-mini" id="btnBrowseRectTex">Sfoglia</button>
+                      <button class="btn-mini btn-mini-del" id="btnClearRectTex">Rimuovi</button>
+                    </div>
+                  </div>
+                  <input type="file" id="inputRectTex" accept="image/*,.hdr,.exr" style="display: none;" />
+                </div>
+              </div>
+            </section>
+
+            <!-- Directional Sun & Shadows -->
+            <section class="accordion-sec expanded">
+              <div class="accordion-header">
+                <span class="accordion-arrow">▾</span>
+                <span class="accordion-title">LUCE DIREZIONALE & OMBRE</span>
+              </div>
+              <div class="accordion-body">
+                <div class="switch-row">
+                  <span>Luce Solare Secondaria</span>
+                  <label class="tredo-switch">
+                    <input type="checkbox" id="chkEnableDirLight" />
+                    <span class="switch-slider"></span>
+                  </label>
+                </div>
+
+                <div class="switch-row mt-3">
+                  <span>Genera Ombre di Contatto</span>
+                  <label class="tredo-switch">
+                    <input type="checkbox" id="chkDirShadows" />
+                    <span class="switch-slider"></span>
+                  </label>
+                </div>
+
+                <div class="slider-prop mt-4">
+                  <div class="slider-prop-meta">
+                    <span>Intensità Sole</span>
+                    <span class="prop-num-box" id="valDirIntensity">1.50</span>
+                  </div>
+                  <input type="range" id="sliderDirIntensity" min="0.1" max="5.0" step="0.1" value="1.5" />
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <!-- TAB 3: MODELLI / MATERIALI -->
+          <div class="tab-content" id="tabModelli">
+            <section class="accordion-sec expanded">
+              <div class="accordion-header">
+                <span class="accordion-arrow">▾</span>
+                <span class="accordion-title">MATERIALE SELEZIONATO</span>
+              </div>
+              <div class="accordion-body">
+                <div class="selected-target-card">
+                  <div class="target-card-row">
+                    <span class="target-label">Mesh:</span>
+                    <strong id="badgeMeshName">Nessun oggetto selezionato</strong>
+                  </div>
+                  <div class="target-card-row mt-2">
+                    <span class="target-label">Materiale:</span>
+                    <span class="mat-status-tag tag-original" id="badgeMatStatus">Originale Blender</span>
+                  </div>
+                  <select id="selectModelMaterials" class="select-clean mt-3" title="Seleziona materiale dal modello"></select>
+                  <button class="btn-outline-blue mt-3" id="btnPivotMesh">🎯 Centra perno camera su questo elemento</button>
+                </div>
+
+                <!-- Albedo Color -->
+                <div class="sub-sec-title mt-4">Colore Base / Albedo</div>
+                <div class="color-picker-box">
+                  <div class="color-swatch-wrapper">
+                    <input type="color" id="matInputAlbedoColor" value="#ffffff" />
+                  </div>
+                  <span class="color-hex-text" id="hexAlbedoColor">#FFFFFF</span>
+                </div>
+                <div class="tex-slot mt-3">
+                  <div class="tex-thumb" id="thumb_albedo"></div>
+                  <div class="tex-meta">
+                    <span class="tex-label">Texture Diffusa / Albedo</span>
+                    <div class="tex-buttons">
+                      <button class="btn-mini" id="btnBrowseTexAlbedo">Sfoglia</button>
+                      <button class="btn-mini btn-mini-del" id="btnClearTexAlbedo">Rimuovi</button>
+                    </div>
+                  </div>
+                  <input type="file" id="inputTexAlbedo" accept="image/*" style="display: none;" />
+                </div>
+
+                <!-- Surface Roughness & Metallic -->
+                <div class="sub-sec-title mt-6">Proprietà PBR Superficie</div>
+                <div class="slider-prop">
+                  <div class="slider-prop-meta">
+                    <div class="prop-title-row">
+                      <span>Roughness (Rugosità)</span>
+                      <button class="btn-micro" id="btnApplyRoughnessToAll" title="Applica questo valore a tutti i materiali del modello">🌐 A tutti i materiali</button>
+                    </div>
+                    <span class="prop-num-box" id="valRoughness">0.50</span>
+                  </div>
+                  <input type="range" id="sliderRoughness" min="0" max="1" step="0.01" value="0.5" />
+                </div>
+
+                <div class="slider-prop mt-4">
+                  <div class="slider-prop-meta">
+                    <span>Metallic (Metallicità)</span>
+                    <span class="prop-num-box" id="valMetallic">0.00</span>
+                  </div>
+                  <input type="range" id="sliderMetallic" min="0" max="1" step="0.01" value="0.0" />
+                </div>
+
+                <div class="tex-slot mt-3">
+                  <div class="tex-thumb" id="thumb_metallic"></div>
+                  <div class="tex-meta">
+                    <span class="tex-label">Mappa Metallic / Roughness</span>
+                    <div class="tex-buttons">
+                      <button class="btn-mini" id="btnBrowseTexMetallic">Sfoglia</button>
+                      <button class="btn-mini btn-mini-del" id="btnClearTexMetallic">Rimuovi</button>
+                    </div>
+                  </div>
+                  <input type="file" id="inputTexMetallic" accept="image/*" style="display: none;" />
+                </div>
+
+                <!-- Bump / Normal Map -->
+                <div class="tex-slot mt-3">
+                  <div class="tex-thumb" id="thumb_bump"></div>
+                  <div class="tex-meta">
+                    <span class="tex-label">Mappa Rilievo (Normal / Bump)</span>
+                    <div class="tex-buttons">
+                      <button class="btn-mini" id="btnBrowseTexBump">Sfoglia</button>
+                      <button class="btn-mini btn-mini-del" id="btnClearTexBump">Rimuovi</button>
+                    </div>
+                  </div>
+                  <input type="file" id="inputTexBump" accept="image/*" style="display: none;" />
+                </div>
+
+                <!-- Emissive -->
+                <div class="sub-sec-title mt-6">Emissione Luce / Glow</div>
+                <div class="color-picker-box">
+                  <div class="color-swatch-wrapper">
+                    <input type="color" id="matInputEmissiveColor" value="#000000" />
+                  </div>
+                  <span class="color-hex-text" id="hexEmissiveColor">#000000</span>
+                </div>
+                <div class="slider-prop mt-3">
+                  <div class="slider-prop-meta">
+                    <span>Intensità Emissiva</span>
+                    <span class="prop-num-box" id="valEmissiveInt">1.00</span>
+                  </div>
+                  <input type="range" id="sliderEmissiveInt" min="0.0" max="8.0" step="0.1" value="1.0" />
+                </div>
+                <div class="tex-slot mt-3">
+                  <div class="tex-thumb" id="thumb_emissive"></div>
+                  <div class="tex-meta">
+                    <span class="tex-label">Texture Emissiva</span>
+                    <div class="tex-buttons">
+                      <button class="btn-mini" id="btnBrowseTexEmissive">Sfoglia</button>
+                      <button class="btn-mini btn-mini-del" id="btnClearTexEmissive">Rimuovi</button>
+                    </div>
+                  </div>
+                  <input type="file" id="inputTexEmissive" accept="image/*" style="display: none;" />
+                </div>
+
+                <!-- Clearcoat -->
+                <div class="sub-sec-title mt-6">Vernice Trasparente (Clearcoat)</div>
+                <div class="checkbox-clean">
+                  <label>
+                    <input type="checkbox" id="chkClearcoat" />
+                    <span>Abilita Strato Clearcoat</span>
+                  </label>
+                </div>
+                <div class="slider-prop mt-3">
+                  <div class="slider-prop-meta">
+                    <span>Intensità Clearcoat</span>
+                    <span class="prop-num-box" id="valClearcoatInt">0.80</span>
+                  </div>
+                  <input type="range" id="sliderClearcoatInt" min="0" max="1" step="0.05" value="0.8" />
+                </div>
+                <div class="slider-prop mt-3">
+                  <div class="slider-prop-meta">
+                    <span>Rugosità Clearcoat</span>
+                    <span class="prop-num-box" id="valClearcoatRough">0.00</span>
+                  </div>
+                  <input type="range" id="sliderClearcoatRough" min="0" max="1" step="0.02" value="0.0" />
+                </div>
+
+                <!-- Opacity & Double Sided -->
+                <div class="sub-sec-title mt-6">Trasparenza & Doppia Faccia</div>
+                <div class="slider-prop">
+                  <div class="slider-prop-meta">
+                    <span>Opacità (Alpha)</span>
+                    <span class="prop-num-box" id="valAlpha">1.00</span>
+                  </div>
+                  <input type="range" id="sliderAlpha" min="0.0" max="1.0" step="0.02" value="1.0" />
+                </div>
+                <div class="prop-row mt-3">
+                  <span>Modalità Trasparenza</span>
+                  <select id="selectTransparencyMode" class="select-clean">
+                    <option value="0">Opaque (Solido)</option>
+                    <option value="1">Alpha Test (Ritaglio Cutoff)</option>
+                    <option value="2">Alpha Blend (Trasparenza Continua)</option>
+                    <option value="3">Alpha Blend &amp; Test</option>
+                  </select>
+                </div>
+                <div class="checkbox-clean mt-3">
+                  <label>
+                    <input type="checkbox" id="chkDoubleSided" />
+                    <span>Due Lati (No Backface Culling)</span>
+                  </label>
+                </div>
+
+                <!-- Ambient Occlusion -->
+                <div class="tex-slot mt-4">
+                  <div class="tex-thumb" id="thumb_ambient"></div>
+                  <div class="tex-meta">
+                    <span class="tex-label">Ambient Occlusion Map</span>
+                    <div class="tex-buttons">
+                      <button class="btn-mini" id="btnBrowseTexAmbient">Sfoglia</button>
+                      <button class="btn-mini btn-mini-del" id="btnClearTexAmbient">Rimuovi</button>
+                    </div>
+                  </div>
+                  <input type="file" id="inputTexAmbient" accept="image/*" style="display: none;" />
+                </div>
+
+                <!-- Action buttons -->
+                <div class="material-actions-row mt-6">
+                  <button class="btn-outline-danger" id="btnResetCurrentMat">Ripristina a Blender</button>
+                  <button class="btn-outline-blue" id="btnOpenInFullInspector">Apri nell'Inspector Ufficiale</button>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <!-- TAB 4: LOOKDEV CALIBRAZIONE (Inspired by Image 1) -->
+          <div class="tab-content" id="tabLookdev">
+            <section class="accordion-sec expanded">
+              <div class="accordion-header">
+                <span class="accordion-arrow">▾</span>
+                <span class="accordion-title">SFERE DI CALIBRAZIONE LOOKDEV</span>
+              </div>
+              <div class="accordion-body">
+                <div class="switch-row">
+                  <span>Mostra Sfere di Calibrazione</span>
+                  <label class="tredo-switch">
+                    <input type="checkbox" id="chkLookdevSpheres" />
+                    <span class="switch-slider"></span>
+                  </label>
+                </div>
+                <p class="prop-hint mt-2">Inserisce in scena le 3 sfere professionali da studio look-dev:</p>
+                <div class="lookdev-balls-legend mt-3">
+                  <div class="ball-legend-item">
+                    <span class="legend-ball ball-black"></span>
+                    <div>
+                      <strong>Matte Black (Nero Opaco)</strong>
+                      <small>Albedo 4%, Roughness 0.85 — Verifica assorbimento luce e contrasto scuro</small>
+                    </div>
+                  </div>
+                  <div class="ball-legend-item mt-2">
+                    <span class="legend-ball ball-gray"></span>
+                    <div>
+                      <strong>Neutral Gray 18% (Grigio Diffuso)</strong>
+                      <small>Albedo 75%, Roughness 0.70 — Calibrazione del bilanciamento del bianco ed esposizione</small>
+                    </div>
+                  </div>
+                  <div class="ball-legend-item mt-2">
+                    <span class="legend-ball ball-chrome"></span>
+                    <div>
+                      <strong>Chrome Mirror (Cromo Specchio)</strong>
+                      <small>Metallic 100%, Roughness 0% — Ispezione IBL a 360° e nitidezza dei riflessi</small>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="slider-prop mt-6">
+                  <div class="slider-prop-meta">
+                    <span>Dimensione Sfere</span>
+                    <span class="prop-num-box" id="valLookdevScale">1.0x</span>
+                  </div>
+                  <input type="range" id="sliderLookdevScale" min="0.3" max="3.0" step="0.1" value="1.0" />
+                </div>
+
+                <div class="slider-prop mt-4">
+                  <div class="slider-prop-meta">
+                    <span>Altezza Posizione Y</span>
+                    <span class="prop-num-box" id="valLookdevHeight">0.05m</span>
+                  </div>
+                  <input type="range" id="sliderLookdevHeight" min="-0.5" max="2.0" step="0.05" value="0.05" />
+                </div>
+              </div>
+            </section>
+          </div>
+        </aside>
+      </div>
+
+      <!-- Hidden Legacy Panel Placeholders for backward compatibility -->
+      <aside class="side-panel side-panel-right" id="materialPanel" style="display: none;"></aside>
+      <aside class="side-panel side-panel-left" id="envPanel" style="display: none;"></aside>
+      <aside class="side-panel side-panel-left" id="lightsPanel" style="display: none;"></aside>
+
+      <!-- Drag & Drop Fullscreen Overlay -->
+      <div class="drop-overlay" id="dropOverlay">
+        <div class="drop-overlay-content">
+          <div class="drop-pulsing-icon">📥</div>
+          <h2>Rilascia il file nella finestra</h2>
+          <p id="dropOverlayText">Rilascia per caricare o aggiornare il file</p>
+        </div>
+      </div>
+
+      <!-- Texture Assignment Modal Dialog -->
+      <dialog id="textureAssignModal" class="modal-clean">
+        <div class="modal-dialog-content">
+          <div class="modal-dialog-header">
+            <h3>Assegna Texture Rilasciata</h3>
+            <button class="btn-close-modal" id="btnCloseModal">×</button>
+          </div>
+          <p class="modal-subtitle">Hai rilasciato un'immagine su <strong id="modalMeshTarget">Mesh</strong>. A quale canale PBR desideri assegnarla?</p>
+          <div class="modal-slot-choices">
+            <button class="btn-slot-choice" data-slot="albedo">
+              <span>🎨 Colore Base / Albedo</span>
+            </button>
+            <button class="btn-slot-choice" data-slot="metallicRoughness">
+              <span>⚙️ Metallic / Roughness</span>
+            </button>
+            <button class="btn-slot-choice" data-slot="bump">
+              <span>🗻 Normal / Bump Map</span>
+            </button>
+            <button class="btn-slot-choice" data-slot="emissive">
+              <span>💡 Emissive (Glow)</span>
+            </button>
+            <button class="btn-slot-choice" data-slot="ambient">
+              <span>🌑 Ambient Occlusion</span>
+            </button>
+          </div>
+        </div>
+      </dialog>
+
+      <!-- Toast Notification Container -->
+      <div class="toast-container" id="toastContainer"></div>
+    </div>
+
+    <!-- Main TypeScript App Entrypoint -->
+    <script type="module" src="/src/app.ts"></script>
+  </body>
+</html>
