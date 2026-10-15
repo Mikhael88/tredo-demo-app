@@ -117,6 +117,21 @@ class BabylonHotSwapSandbox {
   // Screen Space Reflections (SSR) Pipeline
   private ssrPipeline: any = null;
 
+  // Ambient Occlusion (SSAO) Pipeline
+  private ssaoPipeline: any = null;
+  private isSsaoAttached: boolean = false;
+  private ssaoSettings = {
+    enabled: true,
+    totalStrength: 1.4,
+    radius: 0.8,
+    samples: 16,
+    base: 0.0,
+    maxZ: 100,
+    expensiveBlur: true,
+    bilateralSoften: 0.0,
+    ratio: 0.75
+  };
+
   // DOM Elements
   private appLayout: HTMLElement;
   private centerDropzone: HTMLElement;
@@ -147,6 +162,7 @@ class BabylonHotSwapSandbox {
     this.initBabylon();
     this.initAntiAliasing();
     this.initSSR();
+    this.initSSAO();
     this.initStudioLighting();
     this.initLookdevSpheres();
     this.initUI();
@@ -326,6 +342,99 @@ class BabylonHotSwapSandbox {
   }
 
   /**
+   * Ambient Occlusion (SSAO2) Pipeline:
+   * Generates real-time contact shadows and self-shadowing between model components,
+   * crevices, folds, and overlaps with high-fidelity bilateral filtering.
+   */
+  private initSSAO() {
+    try {
+      if (!this.engine.webGLVersion || this.engine.webGLVersion < 2) {
+        console.warn('SSAO2 requires WebGL 2.0');
+        return;
+      }
+
+      this.ssaoPipeline = new BABYLON.SSAO2RenderingPipeline(
+        'ssao',
+        this.scene,
+        {
+          ssaoRatio: this.ssaoSettings.ratio,
+          blurRatio: this.ssaoSettings.ratio
+        },
+        [this.camera]
+      );
+
+      this.isSsaoAttached = true;
+      this.applySsaoParameters();
+
+      if (!this.ssaoSettings.enabled) {
+        this.setSsaoEnabled(false);
+      }
+    } catch (e) {
+      console.warn('SSAO2RenderingPipeline initialization warning:', e);
+    }
+  }
+
+  private applySsaoParameters() {
+    if (!this.ssaoPipeline) return;
+    this.ssaoPipeline.totalStrength = this.ssaoSettings.totalStrength;
+    this.ssaoPipeline.radius = this.ssaoSettings.radius;
+    this.ssaoPipeline.samples = this.ssaoSettings.samples;
+    this.ssaoPipeline.base = this.ssaoSettings.base;
+    this.ssaoPipeline.maxZ = this.ssaoSettings.maxZ;
+    this.ssaoPipeline.expensiveBlur = this.ssaoSettings.expensiveBlur;
+    this.ssaoPipeline.bilateralSoften = this.ssaoSettings.bilateralSoften;
+  }
+
+  public setSsaoEnabled(enabled: boolean) {
+    this.ssaoSettings.enabled = enabled;
+    if (!this.ssaoPipeline) {
+      if (enabled) {
+        this.initSSAO();
+      }
+      return;
+    }
+
+    try {
+      if (enabled && !this.isSsaoAttached) {
+        this.scene.postProcessRenderPipelineManager.attachCamerasToRenderPipeline('ssao', this.camera);
+        this.isSsaoAttached = true;
+      } else if (!enabled && this.isSsaoAttached) {
+        this.scene.postProcessRenderPipelineManager.detachCamerasFromRenderPipeline('ssao', this.camera);
+        this.isSsaoAttached = false;
+      }
+    } catch (e) {
+      console.warn('Error toggling SSAO camera attachment:', e);
+    }
+
+    const eyeBtn = document.getElementById('btnToggleSsaoEye');
+    if (eyeBtn) {
+      eyeBtn.classList.toggle('off', !enabled);
+      eyeBtn.textContent = enabled ? '👁️' : '🙈';
+    }
+
+    const chk = document.getElementById('chkEnableSsao') as HTMLInputElement;
+    if (chk && chk.checked !== enabled) {
+      chk.checked = enabled;
+    }
+  }
+
+  private rebuildSsaoPipeline() {
+    try {
+      if (this.ssaoPipeline) {
+        if (this.isSsaoAttached) {
+          this.scene.postProcessRenderPipelineManager.detachCamerasFromRenderPipeline('ssao', this.camera);
+          this.isSsaoAttached = false;
+        }
+        this.ssaoPipeline.dispose();
+        this.ssaoPipeline = null;
+      }
+      this.initSSAO();
+    } catch (e) {
+      console.warn('Error rebuilding SSAO pipeline:', e);
+    }
+  }
+
+  /**
    * Studio Lighting System:
    * RectAreaLight (Softbox HDR) & Directional Light
    */
@@ -445,6 +554,7 @@ class BabylonHotSwapSandbox {
     this.initHdriToCubemapConverter();
     this.initToneMappingControls();
     this.initSsrControls();
+    this.initSsaoControls();
     this.initStudioLightingControls();
     this.initMaterialPanelControls();
     this.initLookdevControls();
@@ -1921,6 +2031,127 @@ class BabylonHotSwapSandbox {
     const chkDebug = document.getElementById('chkSsrDebug') as HTMLInputElement;
     chkDebug?.addEventListener('change', () => {
       if (this.ssrPipeline) this.ssrPipeline.debug = chkDebug.checked;
+    });
+  }
+
+  /**
+   * Ambient Occlusion (SSAO) Controls:
+   * Real-time contact shadows and self-shadowing between model surfaces
+   */
+  private initSsaoControls() {
+    // 1. Enable / Disable toggle
+    const chkEnable = document.getElementById('chkEnableSsao') as HTMLInputElement;
+    chkEnable?.addEventListener('change', () => {
+      this.setSsaoEnabled(chkEnable.checked);
+      this.showToast(
+        chkEnable.checked
+          ? '🌑 Ambient Occlusion (SSAO) attivata'
+          : 'Ambient Occlusion disattivata',
+        'info'
+      );
+    });
+
+    // 2. Tree item click & eye toggle
+    const nodeSsao = document.getElementById('nodeSsao');
+    nodeSsao?.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement;
+      if (target.id === 'btnToggleSsaoEye' || target.closest('#btnToggleSsaoEye')) {
+        return; // Handled below
+      }
+      this.activateTab('tabScena');
+      const sec = document.getElementById('secSSAO');
+      if (sec) {
+        sec.classList.add('expanded');
+        sec.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    });
+
+    const btnEye = document.getElementById('btnToggleSsaoEye');
+    btnEye?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const nextState = !this.ssaoSettings.enabled;
+      this.setSsaoEnabled(nextState);
+      this.showToast(
+        nextState
+          ? '🌑 Ambient Occlusion (SSAO) attivata'
+          : 'Ambient Occlusion disattivata',
+        'info'
+      );
+    });
+
+    // 3. Total Strength Slider
+    const sliderStrength = document.getElementById('sliderSsaoStrength') as HTMLInputElement;
+    const valStrength = document.getElementById('valSsaoStrength');
+    sliderStrength?.addEventListener('input', () => {
+      const v = parseFloat(sliderStrength.value);
+      this.ssaoSettings.totalStrength = v;
+      if (valStrength) valStrength.textContent = v.toFixed(2);
+      if (this.ssaoPipeline) this.ssaoPipeline.totalStrength = v;
+    });
+
+    // 4. Sampling Radius Slider
+    const sliderRadius = document.getElementById('sliderSsaoRadius') as HTMLInputElement;
+    const valRadius = document.getElementById('valSsaoRadius');
+    sliderRadius?.addEventListener('input', () => {
+      const v = parseFloat(sliderRadius.value);
+      this.ssaoSettings.radius = v;
+      if (valRadius) valRadius.textContent = `${v.toFixed(2)} m`;
+      if (this.ssaoPipeline) this.ssaoPipeline.radius = v;
+    });
+
+    // 5. Samples Dropdown
+    const selectSamples = document.getElementById('selectSsaoSamples') as HTMLSelectElement;
+    selectSamples?.addEventListener('change', () => {
+      const s = parseInt(selectSamples.value, 10);
+      this.ssaoSettings.samples = s;
+      if (this.ssaoPipeline) this.ssaoPipeline.samples = s;
+      this.showToast(`Campioni SSAO: ${s}`, 'info');
+    });
+
+    // 6. Base Occlusion Slider
+    const sliderBase = document.getElementById('sliderSsaoBase') as HTMLInputElement;
+    const valBase = document.getElementById('valSsaoBase');
+    sliderBase?.addEventListener('input', () => {
+      const v = parseFloat(sliderBase.value);
+      this.ssaoSettings.base = v;
+      if (valBase) valBase.textContent = v.toFixed(2);
+      if (this.ssaoPipeline) this.ssaoPipeline.base = v;
+    });
+
+    // 7. Max Depth (Max Z) Slider
+    const sliderMaxZ = document.getElementById('sliderSsaoMaxZ') as HTMLInputElement;
+    const valMaxZ = document.getElementById('valSsaoMaxZ');
+    sliderMaxZ?.addEventListener('input', () => {
+      const v = parseFloat(sliderMaxZ.value);
+      this.ssaoSettings.maxZ = v;
+      if (valMaxZ) valMaxZ.textContent = `${v} m`;
+      if (this.ssaoPipeline) this.ssaoPipeline.maxZ = v;
+    });
+
+    // 8. Expensive Bilateral Blur Toggle
+    const chkExpensiveBlur = document.getElementById('chkSsaoExpensiveBlur') as HTMLInputElement;
+    chkExpensiveBlur?.addEventListener('change', () => {
+      this.ssaoSettings.expensiveBlur = chkExpensiveBlur.checked;
+      if (this.ssaoPipeline) this.ssaoPipeline.expensiveBlur = chkExpensiveBlur.checked;
+    });
+
+    // 9. Bilateral Soften Slider
+    const sliderBilateralSoften = document.getElementById('sliderSsaoBilateralSoften') as HTMLInputElement;
+    const valBilateralSoften = document.getElementById('valSsaoBilateralSoften');
+    sliderBilateralSoften?.addEventListener('input', () => {
+      const v = parseFloat(sliderBilateralSoften.value);
+      this.ssaoSettings.bilateralSoften = v;
+      if (valBilateralSoften) valBilateralSoften.textContent = v.toFixed(2);
+      if (this.ssaoPipeline) this.ssaoPipeline.bilateralSoften = v;
+    });
+
+    // 10. Texture Resolution Ratio Dropdown
+    const selectRatio = document.getElementById('selectSsaoRatio') as HTMLSelectElement;
+    selectRatio?.addEventListener('change', () => {
+      const r = parseFloat(selectRatio.value);
+      this.ssaoSettings.ratio = r;
+      this.rebuildSsaoPipeline();
+      this.showToast(`Risoluzione Texture AO impostata a ${selectRatio.options[selectRatio.selectedIndex].text}`, 'info');
     });
   }
 

@@ -46,6 +46,10 @@ export interface SceneSettings {
   autoRotate: boolean;
   keepCameraOnReload: boolean;
   keepMaterialsOnReload: boolean;
+  ssaoEnabled?: boolean;
+  ssaoStrength?: number;
+  ssaoRadius?: number;
+  ssaoSamples?: number;
 }
 
 const STORAGE_KEY_MATERIALS = 'babylon_sandbox_materials_v1';

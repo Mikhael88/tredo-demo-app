@@ -161,6 +161,13 @@
                 <span class="tree-label">Sfere Lookdev Calibrazione</span>
                 <button class="tree-action-icon tree-eye" id="btnToggleLookdevEye" title="Mostra/Nascondi le 3 sfere di calibrazione PBR">👁️</button>
               </div>
+
+              <!-- Ambient Occlusion (SSAO) Node -->
+              <div class="tree-node-item" id="nodeSsao">
+                <span class="tree-icon">🌑</span>
+                <span class="tree-label">Ambient Occlusion (SSAO)</span>
+                <button class="tree-action-icon tree-eye" id="btnToggleSsaoEye" title="Attiva/Disattiva Ambient Occlusion in tempo reale">👁️</button>
+              </div>
             </div>
           </div>
         </aside>
@@ -496,6 +503,95 @@
                     <span class="prop-num-box" id="valToneContrast">1.00</span>
                   </div>
                   <input type="range" id="sliderToneContrast" min="0.2" max="2.5" step="0.05" value="1.0" />
+                </div>
+              </div>
+            </section>
+
+            <!-- ▾ SECTION: AMBIENT OCCLUSION (SSAO) -->
+            <section class="accordion-sec expanded" id="secSSAO">
+              <div class="accordion-header">
+                <span class="accordion-arrow">▾</span>
+                <span class="accordion-title">AMBIENT OCCLUSION (SSAO)</span>
+                <span class="accordion-badge">PBR</span>
+              </div>
+              <div class="accordion-body">
+                <p class="section-desc-small">
+                  Calcola le ombre di contatto in tempo reale e l'auto-occlusione del modello su se stesso (fessure, pieghe, fori e giunzioni tra componenti).
+                </p>
+
+                <div class="switch-row mt-3">
+                  <span>Abilita Ambient Occlusion</span>
+                  <label class="tredo-switch">
+                    <input type="checkbox" id="chkEnableSsao" checked />
+                    <span class="switch-slider"></span>
+                  </label>
+                </div>
+
+                <div class="slider-prop mt-4">
+                  <div class="slider-prop-meta">
+                    <span>Intensità Ombre (Total Strength)</span>
+                    <span class="prop-num-box" id="valSsaoStrength">1.40</span>
+                  </div>
+                  <input type="range" id="sliderSsaoStrength" min="0.0" max="4.0" step="0.05" value="1.40" />
+                </div>
+
+                <div class="slider-prop mt-4">
+                  <div class="slider-prop-meta">
+                    <span>Raggio Campionamento (Radius)</span>
+                    <span class="prop-num-box" id="valSsaoRadius">0.80 m</span>
+                  </div>
+                  <input type="range" id="sliderSsaoRadius" min="0.05" max="3.0" step="0.05" value="0.80" />
+                </div>
+
+                <div class="prop-row mt-4">
+                  <span>Campioni Qualità (Samples)</span>
+                  <select id="selectSsaoSamples" class="select-clean">
+                    <option value="8">8 - Veloce (Basso costo)</option>
+                    <option value="16" selected>16 - Bilanciato (Consigliato)</option>
+                    <option value="32">32 - Alta Qualità</option>
+                    <option value="64">64 - Massima Risoluzione</option>
+                  </select>
+                </div>
+
+                <div class="slider-prop mt-4">
+                  <div class="slider-prop-meta">
+                    <span>Livello Base (Minimo AO)</span>
+                    <span class="prop-num-box" id="valSsaoBase">0.00</span>
+                  </div>
+                  <input type="range" id="sliderSsaoBase" min="0.0" max="0.8" step="0.02" value="0.00" />
+                </div>
+
+                <div class="slider-prop mt-4">
+                  <div class="slider-prop-meta">
+                    <span>Distanza Massima (Max Depth)</span>
+                    <span class="prop-num-box" id="valSsaoMaxZ">100 m</span>
+                  </div>
+                  <input type="range" id="sliderSsaoMaxZ" min="5" max="300" step="5" value="100" />
+                </div>
+
+                <div class="switch-row mt-4">
+                  <span>Filtro Bilaterale (Denoise Nitido)</span>
+                  <label class="tredo-switch">
+                    <input type="checkbox" id="chkSsaoExpensiveBlur" checked />
+                    <span class="switch-slider"></span>
+                  </label>
+                </div>
+
+                <div class="slider-prop mt-4">
+                  <div class="slider-prop-meta">
+                    <span>Morbidezza Sfocatura Bilaterale</span>
+                    <span class="prop-num-box" id="valSsaoBilateralSoften">0.00</span>
+                  </div>
+                  <input type="range" id="sliderSsaoBilateralSoften" min="0.0" max="1.0" step="0.05" value="0.00" />
+                </div>
+
+                <div class="prop-row mt-4">
+                  <span>Risoluzione Buffer AO</span>
+                  <select id="selectSsaoRatio" class="select-clean">
+                    <option value="0.5">0.5x (Metà - Leggero)</option>
+                    <option value="0.75" selected>0.75x (Bilanciato)</option>
+                    <option value="1.0">1.0x (Nativo Pieno)</option>
+                  </select>
                 </div>
               </div>
             </section>

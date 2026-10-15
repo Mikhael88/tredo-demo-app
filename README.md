@@ -15,11 +15,14 @@ Questa applicazione locale è progettata specificamente per risolvere il problem
 2. **Drag & Drop di Texture e Ambienti HDRI**:
    - Trascina un'immagine (`.png`, `.jpg`, `.webp`) direttamente sopra una mesh nel 3D: apparirà un popup immediato per assegnarla come **Albedo**, **Normal/Bump**, **Metallic/Roughness**, **Emissive** o **Ambient Occlusion**.
    - Trascina un file `.hdr` o `.env` per aggiornare istantaneamente l'ambiente di riflessione e luce dello studio.
-3. **Inspector Ufficiale di Babylon Sandbox Integrato**:
+3. **Ambient Occlusion (SSAO) in Tempo Reale**:
+   - Generazione di ombre di contatto e auto-occlusione del modello su se stesso (fessure, fori, pieghe e giunzioni tra componenti).
+   - Parametri completamente regolabili in tempo reale: Intensità (Total Strength), Raggio (Radius), Campioni (Samples da 8 a 64), Livello Base, Distanza Massima (Max Depth), Filtro Bilaterale (Denoise) e Risoluzione buffer texture AO.
+4. **Inspector Ufficiale di Babylon Sandbox Integrato**:
    - Premi il tasto `I` (o clicca su **🔍 Inspector**) per aprire l'inspector completo ufficiale di Babylon (lo stesso identico della Babylon Sandbox online) con pieno controllo su nodi, animazioni, shader e proprietà avanzate.
-4. **Esportazione GLB Finale**:
+5. **Esportazione GLB Finale**:
    - Clicca su **💾 Esporta GLB** per scaricare direttamente un nuovo file `.glb` con tutte le modifiche ai materiali PBR e le texture applicate!
-5. **Salvataggio & Caricamento Preset**:
+6. **Salvataggio & Caricamento Preset**:
    - Salva e ricarica le tue configurazioni di materiali e scena in formato `.json`.
 
 ---
